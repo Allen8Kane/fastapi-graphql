@@ -61,8 +61,11 @@ class Query:
     @strawberry.field
     def getUser(self, id: int) -> UserType:
         with db_session:
-            user = UserModel[id]
-            result = UserType(**user.to_dict())
+            if UserModel.exists(id=id):
+                user = UserModel[id]
+                result = UserType(**user.to_dict())
+            else:
+                raise HTTPException(status_code=404)
         return result
     
 
